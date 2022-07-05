@@ -103,17 +103,13 @@ const typeDefs = gql`
   }
 
   type Query {
-    authorCount: Int!
-    bookCount: Int!
+    allBooks: [Book!]!
   }
 `;
 
 const resolvers = {
   Query: {
-    authorCount: () => authors.length,
-    bookCount: () => books.length,
-    // allAuthors: () => authors,
-    // findAuthor: (root, args) => authors.find((p) => p.name === args.name),
+    allBooks: () => books,
   },
 };
 
