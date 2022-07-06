@@ -104,19 +104,21 @@ const typeDefs = gql`
   }
 
   type Query {
-    allBooks: [Book!]!
-    allAuthors: [Author!]!
+    allBooks(author: String!): [Book]
   }
 `;
 
 const resolvers = {
   Query: {
-    allBooks: () => books,
-    allAuthors: () => {
-      return authors.map((a) => {
-        a.bookCount = books.filter((b) => b.author === a.name).length;
-        return a;
-      });
+    // allBooks: () => books,
+    // allAuthors: () => {
+    //   return authors.map((author) => {
+    //     author.bookCount = books.filter((book) => book.author === author.name).length;
+    //     return author;
+    //   });
+    // },
+    allBooks: (root, arg) => {
+      return books.filter((book) => book.author === arg.author);
     },
   },
 };
