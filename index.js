@@ -106,25 +106,30 @@ const typeDefs = gql`
   }
 
   type Query {
+    allAuthors: [Author]
     allBooks(genre: String, author: String): [Book]
+  }
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int
+      author: String!
+      genres: [String]
+    ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
 
 const resolvers = {
   Query: {
-    // allBooks: () => books,
-    // allAuthors: () => authors,
-    // allAuthors: () => {
-    //   return [
-    //     ...authors.map((author) => {
-    //       author.bookCount = books.filter(
-    //         (book) => book.author === author.name
-    //       ).length;
-    //       return author;
-    //     }),
-    //     addAuthor(addBook.author),
-    //   ];
-    // },
+    allAuthors: () => {
+      return authors.map((author) => {
+        author.bookCount = books.filter(
+          (book) => book.author === author.name
+        ).length;
+        return author;
+      });
+    },
 
     allBooks: (root, args) => {
       return books.filter((book) => {
@@ -140,19 +145,24 @@ const resolvers = {
       });
     },
   },
-  // Mutation: {
-  //   addBook: (root, args) => {
-  //     const book = { ...args, id: uuid() };
-  //     books = [...books, book];
-  //     return book;
-  //   },
-  //   addAuthor: (root, args) => {
-  //     const author = { ...args, id: uuid() };
-
-  //     authors = [...authors, author];
-  //     return author;
-  //   },
-  // },
+  Mutation: {
+    addBook: (root, args) => {
+      const book = { ...args, id: uuid() };
+      books = [...books, book];
+      const checkAuthor = authors.find((author) => author.name === args.author);
+      if (!checkAuthor)
+        authors = [...authors, { id: uuid(), name: args.author }];
+      return book;
+    },
+    editAuthor: (root, args) => {
+      const checkAuthor = authors.find((author) => author.name === args.name);
+      if (!checkAuthor) return null;
+      authors.map((author) =>
+        author.name === args.name ? { ...author, born: args.setBornTo } : author
+      );
+      return { ...checkAuthor, born: args.setBornTo };
+    },
+  },
 };
 
 const server = new ApolloServer({
