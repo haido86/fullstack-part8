@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server');
+const { v1: uuid } = require('uuid');
 
 let authors = [
   {
@@ -92,44 +93,66 @@ const typeDefs = gql`
   type Author {
     name: String!
     id: ID!
-    born: String!
+    born: Int
     bookCount: Int
   }
-  type Genre {
-    genre: String!
-  }
+
   type Book {
     title: String!
     published: String!
     author: String!
     id: ID!
-    genres: [Genre]!
+    genres: [String]
   }
 
   type Query {
-    allBooks(genre: String!, author: String!): [Book]
+    allBooks(genre: String, author: String): [Book]
   }
 `;
 
 const resolvers = {
   Query: {
     // allBooks: () => books,
+    // allAuthors: () => authors,
     // allAuthors: () => {
-    //   return authors.map((author) => {
-    //     author.bookCount = books.filter((book) => book.author === author.name).length;
-    //     return author;
-    //   });
+    //   return [
+    //     ...authors.map((author) => {
+    //       author.bookCount = books.filter(
+    //         (book) => book.author === author.name
+    //       ).length;
+    //       return author;
+    //     }),
+    //     addAuthor(addBook.author),
+    //   ];
     // },
-    //   allBooks: (root, args) => {
-    //   return books.filter((book) => book.author === args.author);
-    // },
+
     allBooks: (root, args) => {
-      return books.filter(
-        (book) =>
-          book.genres.includes(args.genre) && book.author === args.author
-      );
+      return books.filter((book) => {
+        if (args.genre && args.author) {
+          return (
+            book.genres.includes(args.genre) && book.author === args.author
+          );
+        } else if (args.genre && !args.author) {
+          return book.genres.includes(args.genre);
+        } else if (!args.genre && args.author) {
+          return book.author === args.author;
+        }
+      });
     },
   },
+  // Mutation: {
+  //   addBook: (root, args) => {
+  //     const book = { ...args, id: uuid() };
+  //     books = [...books, book];
+  //     return book;
+  //   },
+  //   addAuthor: (root, args) => {
+  //     const author = { ...args, id: uuid() };
+
+  //     authors = [...authors, author];
+  //     return author;
+  //   },
+  // },
 };
 
 const server = new ApolloServer({
