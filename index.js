@@ -107,7 +107,7 @@ const typeDefs = gql`
   }
 
   type Query {
-    allBooks(genre: String!): [Book]
+    allBooks(genre: String!, author: String!): [Book]
   }
 `;
 
@@ -124,7 +124,10 @@ const resolvers = {
     //   return books.filter((book) => book.author === args.author);
     // },
     allBooks: (root, args) => {
-      return books.filter((book) => book.genres.includes(args.genre));
+      return books.filter(
+        (book) =>
+          book.genres.includes(args.genre) && book.author === args.author
+      );
     },
   },
 };
