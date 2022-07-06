@@ -95,16 +95,19 @@ const typeDefs = gql`
     born: String!
     bookCount: Int
   }
+  type Genre {
+    genre: String!
+  }
   type Book {
     title: String!
     published: String!
     author: String!
     id: ID!
-    genres: [String!]!
+    genres: [Genre]!
   }
 
   type Query {
-    allBooks(author: String!): [Book]
+    allBooks(genre: String!): [Book]
   }
 `;
 
@@ -117,8 +120,11 @@ const resolvers = {
     //     return author;
     //   });
     // },
-    allBooks: (root, arg) => {
-      return books.filter((book) => book.author === arg.author);
+    //   allBooks: (root, args) => {
+    //   return books.filter((book) => book.author === args.author);
+    // },
+    allBooks: (root, args) => {
+      return books.filter((book) => book.genres.includes(args.genre));
     },
   },
 };
