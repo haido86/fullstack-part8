@@ -157,7 +157,7 @@ const resolvers = {
     editAuthor: (root, args) => {
       const checkAuthor = authors.find((author) => author.name === args.name);
       if (!checkAuthor) return null;
-      authors.map((author) =>
+      authors = authors.map((author) =>
         author.name === args.name ? { ...author, born: args.setBornTo } : author
       );
       return { ...checkAuthor, born: args.setBornTo };
