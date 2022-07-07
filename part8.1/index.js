@@ -141,7 +141,7 @@ const resolvers = {
           return book.genres.includes(args.genre);
         } else if (!args.genre && args.author) {
           return book.author === args.author;
-        }
+        } else return books;
       });
     },
   },
