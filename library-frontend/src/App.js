@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import Authors from './components/Authors'
-import Books from './components/Books'
-import NewBook from './components/NewBook'
+import { useState } from 'react';
+
+import Authors from './components/Authors';
+import Books from './components/Books';
+import NewBook from './components/NewBook';
 
 const App = () => {
-  const [page, setPage] = useState('authors')
+  const [page, setPage] = useState('authors');
 
   return (
     <div>
@@ -20,7 +21,7 @@ const App = () => {
 
       <NewBook show={page === 'add'} />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
