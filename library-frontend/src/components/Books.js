@@ -1,20 +1,20 @@
 import { gql, useQuery } from '@apollo/client';
 
-const Books = (props) => {
-  const ALL_BOOKS = gql`
-    query {
-      allBooks {
-        title
-        author
-        published
-        genres
-        id
-      }
+const ALL_BOOKS = gql`
+  query {
+    allBooks {
+      title
+      author
+      published
+      genres
+      id
     }
-  `;
+  }
+`;
 
+const Books = (props) => {
   const result = useQuery(ALL_BOOKS);
-  // console.log('result', result);
+  console.log('result', result);
 
   if (!props.show) {
     return null;
