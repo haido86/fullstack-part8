@@ -23,7 +23,6 @@ const EDIT_BORN = gql`
 `;
 
 const Authors = (props) => {
-  const [name, setName] = useState('');
   const [born, setBorn] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   const result = useQuery(ALL_AUTHORS);
@@ -44,8 +43,8 @@ const Authors = (props) => {
 
   const submit = async (event) => {
     event.preventDefault();
-    changeBorn({ variables: { name, setBornTo: +born } });
-    setName('');
+    changeBorn({ variables: { name: selectedOption.value, setBornTo: +born } });
+    setSelectedOption('');
     setBorn('');
   };
 
