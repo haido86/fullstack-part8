@@ -112,10 +112,10 @@ const typeDefs = gql`
   type Mutation {
     addBook(
       title: String!
-      published: Int
       author: String!
-      genres: [String]
-    ): Book
+      published: Int!
+      genres: [String!]!
+    ): Book!
     editAuthor(name: String!, setBornTo: Int!): Author
   }
 `;
@@ -135,12 +135,12 @@ const resolvers = {
       return books.filter((book) => {
         if (args.genre && args.author) {
           return (
-            book.genres.includes(args.genre) && book.author === args.author
+            book.genres.includes(args.genre) && book.author.name === args.author
           );
         } else if (args.genre && !args.author) {
           return book.genres.includes(args.genre);
         } else if (!args.genre && args.author) {
-          return book.author === args.author;
+          return book.author.name === args.author;
         } else return books;
       });
     },

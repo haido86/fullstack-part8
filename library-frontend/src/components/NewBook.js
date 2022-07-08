@@ -17,8 +17,10 @@ const CREATE_BOOK = gql`
     ) {
       title
       published
-      author
       genres
+      author {
+        name
+      }
     }
   }
 `;
