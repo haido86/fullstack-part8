@@ -1,22 +1,14 @@
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
+import { useState } from 'react';
+import { ALL_BOOKS } from '../queries';
 
-const ALL_BOOKS = gql`
-  query {
-    allBooks {
-      title
-      published
-      genres
-      id
-      author {
-        name
-      }
-    }
-  }
-`;
+let genres = ['all genres'];
 
 const Books = (props) => {
-  const result = useQuery(ALL_BOOKS);
-  console.log('result', result);
+  const [nameToSearch, setNameToSearch] = useState('');
+  const result = useQuery(ALL_BOOKS, {
+    variables: { nameToSearch },
+  });
 
   if (!props.show) {
     return null;
@@ -26,6 +18,14 @@ const Books = (props) => {
   }
 
   const books = result.data.allBooks;
+
+  result.data.allBooks.forEach((book) => {
+    book.genres.forEach((genre) => {
+      if (genre && !genres.includes(genre)) {
+        genres = [genre, ...genres];
+      }
+    });
+  });
 
   return (
     <div>
@@ -41,12 +41,21 @@ const Books = (props) => {
           {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
-              <td>{a.author}</td>
+              <td>{a.author.name}</td>
               <td>{a.published}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      <div style={{ margin: 10, display: 'flex' }}>
+        {genres.map((genre) => (
+          <button
+            onClick={() => setNameToSearch(genre === 'all genres' ? '' : genre)}
+          >
+            {genre}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };

@@ -14,9 +14,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = 'secret';
 
-const MONGODB_URI = 'TODO';
-
-console.log('connecting to', MONGODB_URI);
+// const MONGODB_URI = 'TODO';
 
 mongoose
   .connect(MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -63,7 +61,7 @@ const typeDefs = gql`
       author: String!
       published: Int!
       genres: [String!]
-    ): Book!
+    ): Book
     editAuthor(name: String!, setBornTo: Int!): Author
     createUser(username: String!, favouriteGenre: String): User
     login(username: String!, password: String!): Token
@@ -73,24 +71,25 @@ const typeDefs = gql`
 const resolvers = {
   Query: {
     allAuthors: async (root, args) => {
-      console.log('allAuthors');
       return await Author.find({});
     },
 
     allBooks: async (root, args) => {
-      return Book.find({}).populate('author');
+      if (args.genre) {
+        return Book.find({ genres: args.genre }).populate('author');
+      } else {
+        return Book.find({}).populate('author');
+      }
     },
     me: (root, args, context) => {
       return context.currentUser;
     },
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
       let checkAuthor;
       const findAuthor = await Author.findOne({ name: args.author }).exec();
-      // console.log('findAuthor', findAuthor);
       const currentUser = context.currentUser;
-
       if (!currentUser) {
         throw new AuthenticationError('not authenticated');
       }
@@ -104,18 +103,19 @@ const resolvers = {
         checkAuthor = findAuthor;
       }
 
-      console.log('checkAuthor', checkAuthor);
       const book = new Book({ ...args, author: checkAuthor._id });
 
-      try {
-        await book.save();
-      } catch (error) {
-        throw new UserInputError(error.message, {
-          invalidArgs: args,
+      const saveBook = await book.save();
+
+      return Book.findById(saveBook._id)
+        .populate('author')
+        .catch((error) => {
+          throw new UserInputError(error.message, {
+            invalidArgs: args,
+          });
         });
-      }
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
       const author = await Author.findOne({ name: args.name });
       const currentUser = context.currentUser;
 
@@ -129,19 +129,19 @@ const resolvers = {
 
       author.born = args.setBornTo;
 
-      try {
-        await author.save();
-      } catch (error) {
+      return author.save().catch((error) => {
         throw new UserInputError(error.message, {
           invalidArgs: args,
         });
-      }
+      });
     },
+
     createUser: async (root, args) => {
       const user = new User({
         username: args.username,
         favouriteGenre: args.favouriteGenre,
       });
+
       return user.save().catch((error) => {
         throw new UserInputError(error.message, {
           invalidArgs: args,
