@@ -17,11 +17,17 @@
   },
   "homepage": "https://github.com/haido86/fullstack-part8#readme",
   "dependencies": {
+    "@graphql-tools/schema": "^8.5.0",
     "apollo-server": "^3.9.0",
+    "apollo-server-core": "^3.10.0",
+    "apollo-server-express": "^3.10.0",
     "dotenv": "^16.0.1",
+    "express": "^4.18.1",
     "graphql": "^16.5.0",
+    "graphql-subscriptions": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.4.3"
+    "mongoose": "^6.4.3",
+    "subscriptions-transport-ws": "^0.11.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"

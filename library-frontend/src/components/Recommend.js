@@ -12,7 +12,7 @@ const Recommend = () => {
   const books = booksResult?.data?.allBooks;
 
   useEffect(() => {
-    const favouriteGenre = result.data?.me?.favouriteGenre;
+    const favouriteGenre = result?.data?.me?.favouriteGenre;
     if (favouriteGenre) {
       setNameToSearch(favouriteGenre);
     }

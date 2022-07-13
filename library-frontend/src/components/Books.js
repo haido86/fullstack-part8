@@ -17,15 +17,19 @@ const Books = (props) => {
     return <div>loading...</div>;
   }
 
-  const books = result.data.allBooks;
-
-  result.data.allBooks.forEach((book) => {
+  const books = result?.data?.allBooks;
+  console.log('books', books);
+  books.forEach((book) => {
     book.genres.forEach((genre) => {
       if (genre && !genres.includes(genre)) {
         genres = [genre, ...genres];
       }
     });
   });
+  console.log('genres', genres);
+  const filterBooksByGenre = [...genres];
+
+  console.log('filterBooksByGenre', filterBooksByGenre);
 
   return (
     <div>
@@ -39,7 +43,7 @@ const Books = (props) => {
             <th>published</th>
           </tr>
           {books.map((a) => (
-            <tr key={a.title}>
+            <tr key={a.id}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
               <td>{a.published}</td>
@@ -48,8 +52,9 @@ const Books = (props) => {
         </tbody>
       </table>
       <div style={{ margin: 10, display: 'flex' }}>
-        {genres.map((genre) => (
+        {genres.map((genre, index) => (
           <button
+            key={index}
             onClick={() => setNameToSearch(genre === 'all genres' ? '' : genre)}
           >
             {genre}
